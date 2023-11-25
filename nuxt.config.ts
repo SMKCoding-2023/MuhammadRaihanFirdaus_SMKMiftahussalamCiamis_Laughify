@@ -12,6 +12,8 @@ export default defineNuxtConfig({
     SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
     SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
     SUPABASE_PROJECT_URL: process.env.SUPABASE_PROJECT_URL,
+    SITE_URL: process.env.SITE_URL,
+    VERCEL_URL: process.env.VERCEL_URL,
   },
   css: ["~/assets/css/main.css"],
   postcss: {
