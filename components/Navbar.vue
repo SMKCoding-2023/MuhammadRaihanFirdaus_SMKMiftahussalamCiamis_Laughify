@@ -1,5 +1,5 @@
 <template>
-  <header class="flex flex-row items-center justify-center fixed border-b border-base-300 w-full z-10 h-16">
+  <header class="flex flex-row items-center justify-center fixed border-b border-base-300 w-full z-10 h-16 bg-base-100">
     <nav class="flex flex-row items-center justify-between w-[860px] px-4">
       <div class="items-center justify-center flex gap-2 flex-row">
         <label for="my-drawer" tabindex="0" class="btn btn-ghost btn-circle drawer-butto md:hidden">

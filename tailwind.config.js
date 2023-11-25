@@ -2,7 +2,12 @@
 module.exports = {
   content: ["./components/**/*.{js,vue,ts}", "./layouts/**/*.vue", "./pages/**/*.vue", "./plugins/**/*.{js,ts}", "./app.vue", "./error.vue"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        quicksand: ["'Quicksand'", "sans-serif"],
+        poppins: ["'Poppins'", "sand-serif"],
+      },
+    },
     container: {
       center: true,
     },

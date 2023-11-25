@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 const user = useSupabaseUser();
 const authStore = useAuthStore();
 
@@ -15,7 +15,7 @@ watch(
   user,
   async () => {
     const req = {
-      name: user.value.user_metadata.full_name,
+      name: user.value.email.split("@")[0],
       email: user.value.email,
       image: user.value.user_metadata.avatar_url,
     };

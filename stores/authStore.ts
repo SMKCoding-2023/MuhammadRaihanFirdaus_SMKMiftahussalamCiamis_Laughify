@@ -1,3 +1,5 @@
+import PREFIX from "~/constant/PREFIX";
+
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     status: false,
@@ -8,24 +10,10 @@ export const useAuthStore = defineStore("auth", {
       try {
         const supabase = useSupabaseClient();
 
-        const getURL = () => {
-          const { SITE_URL, VERCEL_URL } = useAppConfig();
-          let url = SITE_URL ?? VERCEL_URL ?? "http://localhost:3000/";
-          // Make sure to include `https://` when not localhost.
-          //@ts-ignore
-          url = url.includes("http") ? url : `https://${url}`;
-          // Make sure to include a trailing `/`.
-          //@ts-ignore
-          url = url.charAt(url.length - 1) === "/" ? url : `${url}/`;
-          return url;
-        };
-
-        console.log(getURL());
-
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: `${getURL()}confirm`,
+            redirectTo: getURL(),
           },
         });
 
@@ -62,15 +50,11 @@ export const useAuthStore = defineStore("auth", {
       try {
         const supabase = useSupabaseClient();
 
-        const { data, error } = await useAsyncData("users", async () => {
-          //@ts-ignore
-          const { data, error } = await supabase.from("users").select("email").eq("email", req.email);
-
-          return { data, error };
-        });
+        //@ts-ignore
+        const { data, error } = await supabase.from("users").select("email").eq("email", req.email);
 
         //@ts-ignore
-        if (error.value || data.value?.data.length === 0) {
+        if (error || data.value?.data.length === 0) {
           throw error;
         }
 
@@ -84,18 +68,13 @@ export const useAuthStore = defineStore("auth", {
     async register(req: any) {
       try {
         const supabase = useSupabaseClient();
+        //@ts-ignore
+        const { data, error } = await supabase
+          .from("users")
+          .insert([{ id: PREFIX.USER + getNanoid(), name: req.name + getNanoid(5), email: req.email, image: req.image }])
+          .select();
 
-        const { data, error } = await useAsyncData("users", async () => {
-          //@ts-ignore
-          const { data, error } = await supabase
-            .from("users")
-            .insert([{ name: req.name, email: req.email, image: req.image }])
-            .select();
-
-          return { data, error };
-        });
-
-        if (error.value) {
+        if (error) {
           throw error;
         }
 
