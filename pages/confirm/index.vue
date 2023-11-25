@@ -23,6 +23,7 @@ watch(
     if (authStore.status === false) {
       await authStore.register(req);
     }
+
     if (authStore.status !== true) {
       return navigateTo("/login");
     }
