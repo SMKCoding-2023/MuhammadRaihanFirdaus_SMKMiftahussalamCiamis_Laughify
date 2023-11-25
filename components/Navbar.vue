@@ -1,0 +1,15 @@
+<template>
+  <header class="flex flex-row items-center justify-center fixed border-b border-base-300 w-full z-10 h-16">
+    <nav class="flex flex-row items-center justify-between w-[860px] px-4">
+      <div class="items-center justify-center flex gap-2 flex-row">
+        <label for="my-drawer" tabindex="0" class="btn btn-ghost btn-circle drawer-butto md:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+        </label>
+        <NuxtLink to="/" class="text-amber-800/70">
+          <span class="font-[900] text-xl [text-shadow:_#c79373_1.5px_1.5px,#fad8c3_3px_3px]">LAUGHIFY</span>
+        </NuxtLink>
+      </div>
+      <Avatar />
+    </nav>
+  </header>
+</template>
