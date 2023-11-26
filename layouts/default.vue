@@ -9,7 +9,7 @@
     <div class="drawer-content">
       <Navbar />
       <div class="max-w-4xl mx-auto pt-16 flex">
-        <main class="w-full min-h-[calc(100vh-64px)] block md:ml-60 overflow-hidden py-8 px-12">
+        <main class="w-full min-h-[calc(100vh-64px)] block md:ml-60 overflow-hidden md:py-8 md:px-12 p-5">
           <slot />
         </main>
         <div class="sidebar hidden md:block overflow-auto fixed h-[calc(100vh-64px)]">

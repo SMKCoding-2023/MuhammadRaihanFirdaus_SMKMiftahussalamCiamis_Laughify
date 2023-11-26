@@ -54,7 +54,7 @@ export const useAuthStore = defineStore("auth", {
         const { data, error } = await supabase.from("users").select("email").eq("email", req.email);
 
         //@ts-ignore
-        if (error || data.value?.data.length === 0) {
+        if (error || data.length === 0) {
           throw error;
         }
 
@@ -69,11 +69,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         const supabase = useSupabaseClient();
         //@ts-ignore
-        const { data, error } = await supabase
-          .from("users")
-          .insert([{ id: PREFIX.USER + getNanoid(), name: req.name + getNanoid(5), email: req.email, image: req.image }])
-          .select();
-
+        const { error } = await supabase.from("users").insert([{ id: PREFIX.USER + getNanoid(), name: req.name + getNanoid(5), email: req.email, image: req.image }]);
         if (error) {
           throw error;
         }

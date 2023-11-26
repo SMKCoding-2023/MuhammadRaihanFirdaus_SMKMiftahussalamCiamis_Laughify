@@ -1,7 +1,7 @@
 <template>
   <div class="py-4 w-60 md:border-r-base-300 md:border-r min-h-full bg-base-100 flex flex-col overflow-auto font-quicksand">
     <div v-for="(menu, i) in MENUS" :key="i">
-      <NuxtLink v-if="!menu.submenuExist" :to="menu.to" class="px-5 py-2 hover:bg-base-200 font-semibold flex gap-3 items-center">
+      <NuxtLink v-if="!menu.submenuExist" :to="menu.to" class="transition-all px-5 py-2 hover:bg-base-200 font-semibold flex gap-3 items-center">
         <i :class="menu.iconClass"></i>
         {{ menu.label }}
       </NuxtLink>
@@ -11,7 +11,7 @@
           {{ menu.label }}
         </div>
         <div v-for="(submenu, i) in menu.submenus" :key="i" class="collapse-content py-0 px-0">
-          <NuxtLink :to="submenu.to" class="px-5 py-2 hover:bg-base-200 font-semibold font-quicksand flex gap-3 items-center">
+          <NuxtLink :to="submenu.to" class="transition-all px-5 py-2 hover:bg-base-200 font-semibold font-quicksand flex gap-3 items-center">
             <i :class="submenu.iconClass"></i>
             {{ submenu.label }}
           </NuxtLink>

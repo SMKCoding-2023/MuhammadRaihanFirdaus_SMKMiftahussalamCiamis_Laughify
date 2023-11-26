@@ -9,7 +9,12 @@
           <span class="font-[900] text-xl [text-shadow:_#c79373_1.5px_1.5px,#fad8c3_3px_3px]">LAUGHIFY</span>
         </NuxtLink>
       </div>
-      <Avatar />
+      <div class="flex justify-center items-center gap-1">
+        <div class="hover:bg-base-200 rounded-full w-7 h-7 flex justify-center items-center cursor-pointer text-blue-500 hover:text-blue-600">
+          <i class="ri-information-line text-lg"></i>
+        </div>
+        <Avatar />
+      </div>
     </nav>
   </header>
 </template>

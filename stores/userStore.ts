@@ -9,7 +9,7 @@ export const useUserStore = defineStore("user", {
       try {
         const supabase = useSupabaseClient();
 
-        const { data, error } = await supabase.from("users").select("image, name").eq("name", req);
+        const { data, error } = await supabase.from("users").select("id, image, name").eq("name", req);
 
         if (error) {
           throw error;
@@ -27,11 +27,13 @@ export const useUserStore = defineStore("user", {
       try {
         const supabase = useSupabaseClient();
 
-        const { data, error } = await supabase.from("users").select("name").eq("email", req);
+        const { data, error } = await supabase.from("users").select("id, name").eq("email", req);
 
         if (error) {
           throw error;
         }
+
+        console.log(data);
 
         this.status = true;
         this.message = "OAuth Successfully !!!";
