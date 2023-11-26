@@ -2,9 +2,9 @@ import PREFIX from "~/constant/PREFIX";
 
 interface ICreatePost {
   userId: string;
-  categoryId: string;
   title: string;
   url: string;
+  hastags: string[];
 }
 
 export const usePostStore = defineStore("post", {
@@ -17,10 +17,11 @@ export const usePostStore = defineStore("post", {
     async createPost(req: ICreatePost) {
       try {
         const supabase = useSupabaseClient();
+
         //@ts-ignore
         const { error } = await supabase
           .from("posts")
-          .insert([{ id: PREFIX.POST + getNanoid(), userId: req.userId, categoryId: req.categoryId, title: req.title, url: req.url }])
+          .insert([{ id: getNanoid(20), userId: req.userId, title: req.title, url: req.url, hastags: req.hastags }])
           .select();
 
         if (error) {

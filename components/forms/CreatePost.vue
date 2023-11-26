@@ -1,76 +1,99 @@
 <script setup>
 const user = useSupabaseUser();
 
-const categoryStore = useCategoryStore();
 const userStore = useUserStore();
 const storageStore = useStorageStore();
 const postStore = usePostStore();
 
-const isSuccess = ref(false);
-const isShowAlert = ref(false);
-const message = ref("Error");
-const isLoading = ref(false);
-const categories = ref([]);
-const imagePreview = ref(null);
-
 const router = useRouter();
 
-const formUploadPost = [
-  { name: "image", label: "Image", type: "file", value: {}, placeholder: "", required: true },
-  { name: "title", label: "Title", type: "text", value: "", placeholder: "Some epic title", required: true },
-  { name: "categoryId", label: "Category", type: "select", value: "", placeholder: "", required: true },
-];
+const titleInput = ref(null);
+const imageInput = ref(null);
+const tempHastag = ref("");
+const hastags = ref([]);
 
-categoryStore.getCategories().then(() => {
-  categories.value = categoryStore.category;
-});
+const isSuccess = ref(false);
+const isShowAlert = ref(false);
+const isLoading = ref(false);
+const imagePreview = ref(null);
+const message = ref(null);
+
+const validateInputHastag = (e) => {
+  if (!(e.key === "," || (e.key >= "a" && e.key <= "z") || (e.key === " " && tempHastag.value !== " ") || e.key === "Backspace")) {
+    e.preventDefault();
+  }
+};
+
+const addHastag = (e) => {
+  if (e.key === "," || (e.key === " " && tempHastag.value.trim() !== "")) {
+    const filteredInput = tempHastag.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
+    if (!hastags.value.includes(filteredInput)) {
+      if (filteredInput !== "") {
+        hastags.value.push(filteredInput);
+      }
+    }
+    tempHastag.value = "";
+  }
+};
+
+const removeHastag = (hastag) => {
+  hastags.value = hastags.value.filter((cur) => cur !== hastag);
+};
 
 const createProduct = async () => {
-  isLoading.value = true;
+  try {
+    isLoading.value = true;
 
-  let file = formUploadPost.find((item) => item.type === "file");
+    const result = {};
 
-  file = await uploadFile(file?.value);
+    result.title = titleInput.value;
+    result.hastags = hastags.value.map((tag) => tag);
 
-  const result = {};
-
-  formUploadPost.forEach((item) => {
-    if (item.name) {
-      result[item.name] = item.value;
+    if (result.hastags.length === 0) {
+      throw new Error("Please insert at least one hastag!");
     }
-  });
 
-  result.url = file;
+    const file = await uploadFile(imageInput);
 
-  await userStore.getUserByEmail(user.value.email).then(() => {
-    result.userId = userStore.user.id;
-  });
+    result.url = file;
 
-  await postStore.createPost(result);
-  if (!postStore.status) {
-    isSuccess.value = postStore.status;
-    message.value = postStore.message;
-    isShowAlert.value = true;
-    isLoading.value = false;
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
+    await userStore.getUserByEmail(user.value.email).then(() => {
+      result.userId = userStore.user.id;
     });
-  } else {
+
+    await postStore.createPost(result);
+
+    if (!postStore.status) {
+      const err = new Error(postStore.message);
+      err.status = postStore.status;
+      throw err;
+    }
+
     isSuccess.value = postStore.status;
     message.value = postStore.message;
     isShowAlert.value = true;
     isLoading.value = false;
+    hastags.value = [];
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
     router.push({ path: "/" });
+  } catch (err) {
+    isSuccess.value = err.status;
+    message.value = err.message;
+    isShowAlert.value = true;
+    isLoading.value = false;
+    hastags.value = [];
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 };
 
 const uploadFile = async (formFile) => {
-  const file = formFile?.target?.files[0];
+  const file = formFile?.value;
   const payload = new FormData();
   payload.append("file", file);
   const pathname = `${Date.now().toString()}.${file.type.split("/")[1]}`;
@@ -81,8 +104,8 @@ const uploadFile = async (formFile) => {
 };
 
 const onFileChange = (e) => {
-  const file = e.target.files[0];
-  imagePreview.value = URL.createObjectURL(file);
+  imageInput.value = e.target.files[0];
+  imagePreview.value = URL.createObjectURL(imageInput.value);
 };
 
 const deletePreview = () => {
@@ -98,21 +121,15 @@ const deletePreview = () => {
           <i class="ri-image-add-line text-lg"></i>
           <h1 class="text-center text-lg">Create Meme</h1>
         </div>
-        <div v-if="isShowAlert" :class="`w-full p-4 mb-4 text-sm rounded-lg ${isSuccess ? 'bg-green-100 text-green-800' : 'text-red-800 bg-red-100'}`" role="alert">
-          {{ message }}
-        </div>
       </di>
     </div>
+    <div v-if="isShowAlert" :class="`font-semibold font-poppins w-full p-4 mb-4 text-sm rounded-lg ${isSuccess ? 'bg-green-100 text-green-800' : 'text-red-800 bg-red-100'}`" role="alert">
+      {{ message }}
+    </div>
     <form @submit.prevent="createProduct">
-      <div class="mb-6" v-for="(item, index) in formUploadPost" :key="index">
-        <label :for="item.name" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold">
-          {{ item.label }}
-        </label>
-        <select v-if="item.type === 'select'" :id="item.name" class="bg-base-200 border border-base-300 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5" v-model="item.value">
-          <option disabled value="">Choose Category</option>
-          <option v-for="(category, index) in categories" :key="index" :value="category?.id">{{ category?.name }}</option>
-        </select>
-        <div v-else-if="item.type === 'file'" class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 bg-base-200 relative">
+      <div class="mb-6">
+        <label for="image" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Image </label>
+        <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 bg-base-200 relative">
           <div v-if="imagePreview">
             <div class="absolute top-10 right-6 cursor-pointer btn btn-circle bg-black/50 border-none text-white hover:bg-red-400" @click="deletePreview">
               <i class="ri-close-fill"></i>
@@ -120,7 +137,7 @@ const deletePreview = () => {
             <img v-if="imagePreview" :src="imagePreview" />
           </div>
           <div v-else>
-            <label for="file-upload" class="text-center">
+            <label for="image" class="text-center">
               <svg class="mx-auto h-12 w-12 text-black" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path
                   fill-rule="evenodd"
@@ -129,35 +146,61 @@ const deletePreview = () => {
                 />
               </svg>
               <div class="mt-4 flex text-sm leading-6 text-gray-600">
-                <label for="file-upload" class="relative cursor-pointer rounded-md bg-transparent font-semibold text-amber-700/80 focus-within:outline-none hover:text-amber-700">
+                <label for="image" class="relative cursor-pointer rounded-md bg-transparent font-semibold text-amber-700/80 focus-within:outline-none hover:text-amber-700">
                   <span>Upload a file</span>
-                  <input
-                    id="file-upload"
-                    name="file-upload"
-                    class="sr-only"
-                    :type="item.type"
-                    :id="item.name"
-                    @change="onFileChange"
-                    :required="item.required"
-                    v-model="item.value"
-                    :placeholder="item.placeholder"
-                  />
+                  <input name="image" class="sr-only" type="file" id="image" @change="onFileChange" required="true" />
                 </label>
                 <p class="pl-1">or drag and drop</p>
               </div>
-              <p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 5MB</p>
+              <p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
             </label>
           </div>
         </div>
+      </div>
+
+      <div class="mb-6">
+        <label for="title" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Title </label>
+
+        <div>
+          <input
+            type="text"
+            id="title"
+            v-model="titleInput"
+            class="bg-base-200 border border-base-300 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
+            placeholder="Some epic title..."
+            required="true"
+          />
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label for="hastag" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Hastag </label>
+
         <input
-          v-else
-          :type="item.type"
-          :id="item.name"
-          v-model="item.value"
-          class="bg-base-200 border border-base-300 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-gray-700"
-          :placeholder="item.placeholder"
-          :required="item.required"
+          @keydown="validateInputHastag"
+          @keyup="addHastag"
+          type="text"
+          id="hastag"
+          v-model="tempHastag"
+          class="mb-3 bg-base-200 border border-base-300 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
+          placeholder="More hastag be better..."
         />
+        <p class="text-gray-700">Use <kbd class="kbd kbd-sm">space</kbd> or <kbd class="kbd kbd-sm">,</kbd> as separator.</p>
+      </div>
+
+      <div class="mb-6" v-show="hastags.length > 0">
+        <div class="flex items-center gap-2">
+          <div v-for="(hastag, index) in hastags" :key="index" class="rounded-full p-1">
+            <div @click="removeHastag(hastag)" class="cursor-pointer badge badge-accent text-white gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              <p>
+                {{ hastag }}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <button type="submit" class="text-white bg-primary btn hover:bg-red-400/70 focus:ring-4 focus:outline-none focus:ring-base-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">

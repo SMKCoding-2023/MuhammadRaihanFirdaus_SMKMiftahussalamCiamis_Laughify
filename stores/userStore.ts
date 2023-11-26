@@ -33,7 +33,6 @@ export const useUserStore = defineStore("user", {
           throw error;
         }
 
-        console.log(data);
 
         this.status = true;
         this.message = "OAuth Successfully !!!";
