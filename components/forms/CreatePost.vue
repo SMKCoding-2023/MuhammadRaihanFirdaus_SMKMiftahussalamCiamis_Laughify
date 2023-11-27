@@ -19,7 +19,7 @@ const imagePreview = ref(null);
 const message = ref(null);
 
 const validateInputHastag = (e) => {
-  if (!(e.key === "," || (e.key >= "a" && e.key <= "z") || (e.key === " " && tempHastag.value !== " ") || e.key === "Backspace")) {
+  if (!(e.key === "," || (e.key >= "a" && e.key <= "z") || (e.key === " " && tempHastag.value.trim() !== "") || e.key === "Backspace")) {
     e.preventDefault();
   }
 };
@@ -34,6 +34,16 @@ const addHastag = (e) => {
     }
     tempHastag.value = "";
   }
+};
+
+const addHastagWithButton = (e) => {
+  const filteredInput = tempHastag.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
+  if (!hastags.value.includes(filteredInput)) {
+    if (filteredInput !== "") {
+      hastags.value.push(filteredInput);
+    }
+  }
+  tempHastag.value = "";
 };
 
 const removeHastag = (hastag) => {
@@ -104,8 +114,23 @@ const uploadFile = async (formFile) => {
 };
 
 const onFileChange = (e) => {
-  imageInput.value = e.target.files[0];
-  imagePreview.value = URL.createObjectURL(imageInput.value);
+  const allowedExtensions = ["png", "jpg", "jpeg", "webp"];
+
+  const file = e.target.files[0];
+
+  if (file) {
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      message.value = `File only accept PNG, JPG, JPEG, and WEBP`;
+      isShowAlert.value = true;
+      isLoading.value = false;
+      return;
+    }
+
+    imageInput.value = file;
+    imagePreview.value = URL.createObjectURL(file);
+  }
 };
 
 const deletePreview = () => {
@@ -152,7 +177,7 @@ const deletePreview = () => {
                 </label>
                 <p class="pl-1">or drag and drop</p>
               </div>
-              <p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+              <p class="text-xs leading-5 text-gray-600">PNG, JPG, JPEG, WEBP up to 10MB</p>
             </label>
           </div>
         </div>
@@ -166,7 +191,7 @@ const deletePreview = () => {
             type="text"
             id="title"
             v-model="titleInput"
-            class="bg-base-200 border border-base-300 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
+            class="input-md border-dashed bg-base-200 border border-gray-900/25 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
             placeholder="Some epic title..."
             required="true"
           />
@@ -176,20 +201,25 @@ const deletePreview = () => {
       <div class="mb-6">
         <label for="hastag" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Hastag </label>
 
-        <input
-          @keydown="validateInputHastag"
-          @keyup="addHastag"
-          type="text"
-          id="hastag"
-          v-model="tempHastag"
-          class="mb-3 bg-base-200 border border-base-300 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
-          placeholder="More hastag be better..."
-        />
-        <p class="text-gray-700">Use <kbd class="kbd kbd-sm">space</kbd> or <kbd class="kbd kbd-sm">,</kbd> as separator.</p>
+        <div class="join flex">
+          <input
+            @keydown="validateInputHastag"
+            @keyup="addHastag"
+            type="text"
+            id="hastag"
+            v-model="tempHastag"
+            class="flex-1 join-item input-md mb-3 bg-base-200 border border-dashed border-gray-900/25 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
+            placeholder="More hastag be better..."
+          />
+          <button type="button" @click="addHastagWithButton" class="btn join-item btn-md border border-dashed border-gray-900/25 hover:bg-red-400/70 hover:text-white">
+            <i class="ri-add-line"></i>
+          </button>
+        </div>
+        <p class="text-gray-700 hidden md:block">Note : If you're using desktop, use <kbd class="kbd kbd-sm">space</kbd> or <kbd class="kbd kbd-sm">,</kbd> as separator.</p>
       </div>
 
       <div class="mb-6" v-show="hastags.length > 0">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
           <div v-for="(hastag, index) in hastags" :key="index" class="rounded-full p-1">
             <div @click="removeHastag(hastag)" class="cursor-pointer badge badge-accent text-white gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current">
