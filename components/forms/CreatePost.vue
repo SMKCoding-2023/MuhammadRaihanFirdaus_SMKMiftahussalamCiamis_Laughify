@@ -19,7 +19,7 @@ const imagePreview = ref(null);
 const message = ref(null);
 
 const validateInputHashtag = (e) => {
-  if (!(e.key === "," || (e.key >= "a" && e.key <= "z") || (e.key === " " && tempHastag.value.trim() !== "") || e.key === "Backspace")) {
+  if (!(e.key === "," || (e.key >= "a" && e.key <= "z") || (e.key === " " && tempHashtag.value.trim() !== "") || e.key === "Backspace")) {
     e.preventDefault();
   }
 };
@@ -59,8 +59,8 @@ const createProduct = async () => {
     result.title = titleInput.value;
     result.hashtags = hashtags.value.map((tag) => tag);
 
-    if (result.hastags.length === 0) {
-      throw new Error("Please insert at least one hastag!");
+    if (result.hashtags.length === 0) {
+      throw new Error("Please insert at least one hashtag!");
     }
 
     const file = await uploadFile(imageInput);
@@ -199,17 +199,17 @@ const deletePreview = () => {
       </div>
 
       <div class="mb-6">
-        <label for="hastag" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Hashtag </label>
+        <label for="hashtag" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Hashtag </label>
 
         <div class="join flex">
           <input
             @keydown="validateInputHashtag"
             @keyup="addHashtag"
             type="text"
-            id="hastag"
+            id="hashtag"
             v-model="tempHashtag"
             class="flex-1 join-item input-md mb-3 bg-base-200 border border-dashed border-gray-900/25 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
-            placeholder="More hastag be better..."
+            placeholder="More hashtag be better..."
           />
           <button type="button" @click="addHashtagWithButton" class="btn join-item btn-md border border-dashed border-gray-900/25 hover:bg-red-400/70 hover:text-white">
             <i class="ri-add-line"></i>
