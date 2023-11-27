@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col gap-6">
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 border-b border-b-base-300 pb-3">
       <div class="flex justify-between flex-row">
         <div tabindex="0" class="avatar m-1">
           <div class="w-24 rounded-full">
-            <NuxtImg :src="userPage.image" :alt="userPage.name" />
+            <NuxtImg :src="userPage?.body?.data?.image" :alt="userPage?.body?.data?.name" />
           </div>
         </div>
         <button class="btn btn-ghost btn-circle p-2">
@@ -20,22 +20,24 @@
           </svg>
         </button>
       </div>
-      <h1 class="font-poppins text-xl font-bold">@{{ userPage.name }}</h1>
+      <h1 class="font-poppins text-xl font-bold">@{{ userPage?.body?.data?.name }}</h1>
     </div>
   </div>
+  <section>
+    <div class="flex flex-col h-auto overflow-hidden w-full">
+      <div v-for="post in userPage?.body?.data?.posts" :key="post.id">
+        <CardsPostCard :post="post" />
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
 const route = useRoute();
-const userStore = useUserStore();
-const userPage = ref({});
 
 const name = typeof route.params.name === "string" ? route.params.name.toString() : null;
 
-userStore.getUserByName(name).then(() => {
-  userPage.value = userStore.user;
-});
-console.log(userStore.user);
+const { data: userPage, error } = useFetch(`/api/user/${name}`);
 
 useSeoMeta({
   title: `Laughify | Profile`,

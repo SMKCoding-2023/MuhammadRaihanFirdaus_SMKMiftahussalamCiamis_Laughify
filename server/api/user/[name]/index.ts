@@ -7,10 +7,12 @@ export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
 
   try {
-    const { data, error } = await supabase.from("users").select("id, image, name, posts(id, title, url, hashtags, createdAt)").eq("name", name);
+    const { data: response, error } = await supabase.from("users").select("id, image, name, posts(id, title, url, hashtags, createdAt)").eq("name", name);
+
+    //@ts-ignore
+    const data = response[0];
 
     if (error) {
-      console.error("Error fetching data:", error);
       return {
         status: 500,
         body: { error: "Internal Server Error" },

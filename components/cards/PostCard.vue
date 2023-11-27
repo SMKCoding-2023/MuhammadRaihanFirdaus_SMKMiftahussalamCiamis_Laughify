@@ -2,7 +2,7 @@
   <div class="mt-4">
     <article class="flex flex-col">
       <header class="flex flex-col gap-2 mb-2">
-        <div class="flex items-start justify-between gap-2">
+        <div v-if="post.users" class="flex items-start justify-between gap-2">
           <div class="max-w-[70%] text-xs items-center gap-1 flex">
             <NuxtLink :to="`/user/${post?.users?.name}`" class="flex items-center justify-center text-amber-700/80 overflow-hidden gap-2">
               <img :src="post?.users?.image" :alt="post?.users?.name" class="w-6 h-6 rounded object-cover" />

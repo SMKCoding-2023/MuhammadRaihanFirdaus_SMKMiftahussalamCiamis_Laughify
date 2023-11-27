@@ -10,7 +10,7 @@
     </div>
     <section>
       <div class="flex flex-col h-auto overflow-hidden w-full">
-        <div v-for="post in posts.data" :key="post.id">
+        <div v-for="post in posts.body.data" :key="post.id">
           <CardsPostCard :post="post" />
         </div>
       </div>
