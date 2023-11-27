@@ -2,7 +2,7 @@
   <div class="flex justify-center items-center flex-row relative">
     <div ref="dropdownRef" @click="dropdownToggle" class="avatar cursor-pointer m-1">
       <div class="w-10 rounded-full">
-        <img :src="user?.user_metadata?.avatar_url" :alt="user?.user_metadata?.name" />
+        <NuxtImg :src="user?.user_metadata?.avatar_url" :alt="user?.user_metadata?.name" class="w-full" />
       </div>
     </div>
     <div :class="`${isShow ? 'absolute' : 'hidden'} right-0 top-14 dropdown-content shadow-sm z-[1] w-52 border-base-300 border min-h-full bg-base-100 font-quicksand rounded-md`">

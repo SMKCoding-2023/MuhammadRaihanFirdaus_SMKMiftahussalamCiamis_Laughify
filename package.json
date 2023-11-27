@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@nuxt/image": "^1.1.0",
     "@nuxtjs/supabase": "^1.1.4",
     "@nuxtjs/tailwindcss": "^6.10.1",
     "autoprefixer": "^10.4.16",

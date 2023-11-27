@@ -9,9 +9,8 @@
       </di>
     </div>
     <section>
-      <div class="flex flex-col h-auto">
-        {{ posts }}
-        <div v-for="post in posts" :key="post.id">
+      <div class="flex flex-col h-auto overflow-hidden w-full">
+        <div v-for="post in posts.data" :key="post.id">
           <CardsPostCard :post="post" />
         </div>
       </div>

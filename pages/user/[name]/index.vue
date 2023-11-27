@@ -4,7 +4,7 @@
       <div class="flex justify-between flex-row">
         <div tabindex="0" class="avatar m-1">
           <div class="w-24 rounded-full">
-            <img :src="userPage.image" :alt="userPage.name" />
+            <NuxtImg :src="userPage.image" :alt="userPage.name" />
           </div>
         </div>
         <button class="btn btn-ghost btn-circle p-2">

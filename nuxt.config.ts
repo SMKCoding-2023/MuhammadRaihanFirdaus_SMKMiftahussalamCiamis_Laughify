@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     },
   },
   devtools: { enabled: false },
-  modules: ["@nuxtjs/supabase", "@nuxtjs/tailwindcss", "@pinia/nuxt"],
+  modules: ["@nuxtjs/supabase", "@nuxtjs/tailwindcss", "@pinia/nuxt", "@nuxt/image"],
   appConfig: {
     SUPABASE_DATABASE_PASSWORD: process.env.SUPABASE_DATABASE_PASSWORD,
     SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
