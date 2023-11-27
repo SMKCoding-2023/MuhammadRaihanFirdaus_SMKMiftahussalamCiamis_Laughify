@@ -9,8 +9,8 @@ const router = useRouter();
 
 const titleInput = ref(null);
 const imageInput = ref(null);
-const tempHastag = ref("");
-const hastags = ref([]);
+const tempHashtag = ref("");
+const hashtags = ref([]);
 
 const isSuccess = ref(false);
 const isShowAlert = ref(false);
@@ -18,36 +18,36 @@ const isLoading = ref(false);
 const imagePreview = ref(null);
 const message = ref(null);
 
-const validateInputHastag = (e) => {
+const validateInputHashtag = (e) => {
   if (!(e.key === "," || (e.key >= "a" && e.key <= "z") || (e.key === " " && tempHastag.value.trim() !== "") || e.key === "Backspace")) {
     e.preventDefault();
   }
 };
 
-const addHastag = (e) => {
-  if (e.key === "," || (e.key === " " && tempHastag.value.trim() !== "")) {
-    const filteredInput = tempHastag.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
-    if (!hastags.value.includes(filteredInput)) {
+const addHashtag = (e) => {
+  if (e.key === "," || (e.key === " " && tempHashtag.value.trim() !== "")) {
+    const filteredInput = tempHashtag.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
+    if (!hashtags.value.includes(filteredInput)) {
       if (filteredInput !== "") {
-        hastags.value.push(filteredInput);
+        hashtags.value.push(filteredInput);
       }
     }
-    tempHastag.value = "";
+    tempHashtag.value = "";
   }
 };
 
-const addHastagWithButton = (e) => {
-  const filteredInput = tempHastag.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
-  if (!hastags.value.includes(filteredInput)) {
+const addHashtagWithButton = (e) => {
+  const filteredInput = tempHashtag.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
+  if (!hashtags.value.includes(filteredInput)) {
     if (filteredInput !== "") {
-      hastags.value.push(filteredInput);
+      hashtags.value.push(filteredInput);
     }
   }
-  tempHastag.value = "";
+  tempHashtag.value = "";
 };
 
-const removeHastag = (hastag) => {
-  hastags.value = hastags.value.filter((cur) => cur !== hastag);
+const removeHashtag = (hashtag) => {
+  hashtags.value = hashtags.value.filter((cur) => cur !== hashtag);
 };
 
 const createProduct = async () => {
@@ -57,7 +57,7 @@ const createProduct = async () => {
     const result = {};
 
     result.title = titleInput.value;
-    result.hastags = hastags.value.map((tag) => tag);
+    result.hashtags = hashtags.value.map((tag) => tag);
 
     if (result.hastags.length === 0) {
       throw new Error("Please insert at least one hastag!");
@@ -83,7 +83,7 @@ const createProduct = async () => {
     message.value = postStore.message;
     isShowAlert.value = true;
     isLoading.value = false;
-    hastags.value = [];
+    hashtags.value = [];
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -94,7 +94,7 @@ const createProduct = async () => {
     message.value = err.message;
     isShowAlert.value = true;
     isLoading.value = false;
-    hastags.value = [];
+    hashtags.value = [];
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -199,34 +199,34 @@ const deletePreview = () => {
       </div>
 
       <div class="mb-6">
-        <label for="hastag" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Hastag </label>
+        <label for="hastag" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Hashtag </label>
 
         <div class="join flex">
           <input
-            @keydown="validateInputHastag"
-            @keyup="addHastag"
+            @keydown="validateInputHashtag"
+            @keyup="addHashtag"
             type="text"
             id="hastag"
-            v-model="tempHastag"
+            v-model="tempHashtag"
             class="flex-1 join-item input-md mb-3 bg-base-200 border border-dashed border-gray-900/25 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
             placeholder="More hastag be better..."
           />
-          <button type="button" @click="addHastagWithButton" class="btn join-item btn-md border border-dashed border-gray-900/25 hover:bg-red-400/70 hover:text-white">
+          <button type="button" @click="addHashtagWithButton" class="btn join-item btn-md border border-dashed border-gray-900/25 hover:bg-red-400/70 hover:text-white">
             <i class="ri-add-line"></i>
           </button>
         </div>
         <p class="text-gray-700 hidden md:block">Note : If you're using desktop, use <kbd class="kbd kbd-sm">space</kbd> or <kbd class="kbd kbd-sm">,</kbd> as separator.</p>
       </div>
 
-      <div class="mb-6" v-show="hastags.length > 0">
+      <div class="mb-6" v-show="hashtags.length > 0">
         <div class="flex items-center gap-2 flex-wrap">
-          <div v-for="(hastag, index) in hastags" :key="index" class="rounded-full p-1">
-            <div @click="removeHastag(hastag)" class="cursor-pointer badge badge-accent text-white gap-1 font-quicksand">
+          <div v-for="(hashtag, index) in hashtags" :key="index" class="rounded-full p-1">
+            <div @click="removeHashtag(hashtag)" class="cursor-pointer badge badge-accent text-white gap-1 font-quicksand">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
               <p>
-                {{ hastag }}
+                {{ hashtag }}
               </p>
             </div>
           </div>

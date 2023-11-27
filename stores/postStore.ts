@@ -1,10 +1,8 @@
-import PREFIX from "~/constant/PREFIX";
-
 interface ICreatePost {
   userId: string;
   title: string;
   url: string;
-  hastags: string[];
+  hashtags: string[];
 }
 
 export const usePostStore = defineStore("post", {
@@ -21,7 +19,7 @@ export const usePostStore = defineStore("post", {
         //@ts-ignore
         const { error } = await supabase
           .from("posts")
-          .insert([{ id: getNanoid(20), userId: req.userId, title: req.title, url: req.url, hastags: req.hastags }])
+          .insert([{ id: getNanoid(20), userId: req.userId, title: req.title, url: req.url, hashtags: req.hashtags }])
           .select();
 
         if (error) {

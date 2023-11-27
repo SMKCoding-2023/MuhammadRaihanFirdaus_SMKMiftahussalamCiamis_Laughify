@@ -36,10 +36,10 @@
     </article>
     <div class="py-3 border-b border-b-base-200">
       <div class="flex items-center gap-1 flex-wrap">
-        <div v-for="hastag in post?.hastags" :key="hastag" class="rounded-full p-1">
+        <div v-for="hashtag in post?.hashtags" :key="hashtag" class="rounded-full p-1">
           <div class="badge badge-accent text-white gap-1 font-quicksand">
             <p>
-              {{ hastag }}
+              {{ hashtag }}
             </p>
           </div>
         </div>
