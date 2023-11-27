@@ -6,7 +6,7 @@
           <div class="max-w-[70%] text-xs items-center gap-1 flex">
             <NuxtLink :to="`/user/${post?.users?.name}`" class="flex items-center justify-center text-amber-700/80 overflow-hidden gap-2">
               <img :src="post?.users?.image" :alt="post?.users?.name" class="w-6 h-6 rounded object-cover" />
-              <span class="font-semibold font-poppins overflow-hidden text-ellipsis">{{ post?.users?.name }}</span>
+              <span class="font-semibold font-poppins overflow-hidden text-ellipsis hover:underline">{{ post?.users?.name }}</span>
             </NuxtLink>
             <span class="colot-gray-700">.</span>
           </div>
@@ -24,18 +24,27 @@
           </div>
         </div>
         <NuxtLink :to="`/post/${post?.id}`">
-          <h2 class="font-semibold font-poppins text-xl hover:underline break-words">{{ post?.title }}</h2>
+          <h2 class="font-semibold font-poppins text-xl break-words hover:underline">{{ post?.title }}</h2>
         </NuxtLink>
       </header>
       <!-- //TODO Checking if Image or Videeo -->
       <div>
         <div class="w-full overflow-hidden relative">
-          <NuxtImg :src="post?.url" :alt="post?.title" class="w-full rounded-md" />
+          <NuxtImg :src="post?.url" :alt="post?.title" class="w-full rounded-md" loading="lazy" />
         </div>
       </div>
     </article>
-    <div class="mt-4 border-t border-t-base-200"></div>
-    <button></button>
+    <div class="py-3 border-b border-b-base-200">
+      <div class="flex items-center gap-1 flex-wrap">
+        <div v-for="hastag in post?.hastags" :key="hastag" class="rounded-full p-1">
+          <div class="badge badge-accent text-white gap-1">
+            <p>
+              {{ hastag }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
