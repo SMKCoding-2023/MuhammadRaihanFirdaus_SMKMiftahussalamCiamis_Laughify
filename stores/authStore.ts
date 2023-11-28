@@ -69,7 +69,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         const supabase = useSupabaseClient();
         //@ts-ignore
-        const { error } = await supabase.from("users").insert([{ id: PREFIX.USER + getNanoid(), name: req.name + getNanoid(5), email: req.email, image: req.image }]);
+        const { error } = await supabase.from("users").insert([{ id: PREFIX.USER + getNanoid(), name: req.name.slice(0, 15) + getNanoid(5), email: req.email, image: req.image }]);
         if (error) {
           throw error;
         }

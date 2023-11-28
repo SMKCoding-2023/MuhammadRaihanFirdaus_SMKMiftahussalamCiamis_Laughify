@@ -34,9 +34,9 @@ const MENUS = [
     iconClass: "ri-pulse-line",
   },
   {
-    label: "Fresh",
-    to: "/fresh",
-    iconClass: "ri-time-line",
+    label: "Shuffle",
+    to: "/shuffle",
+    iconClass: "ri-shuffle-line",
   },
   {
     label: "Forgotten",

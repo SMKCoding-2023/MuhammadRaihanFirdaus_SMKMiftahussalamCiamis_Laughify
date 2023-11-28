@@ -4,7 +4,7 @@
       <div class="flex justify-between flex-row">
         <div tabindex="0" class="avatar m-1">
           <div class="w-24 rounded-full">
-            <NuxtImg :src="userPage?.body?.data?.image" :alt="userPage?.body?.data?.name" />
+            <NuxtImg :src="userPage?.data?.image" :alt="userPage?.data?.name" />
           </div>
         </div>
         <button class="btn btn-ghost btn-circle p-2">
@@ -20,12 +20,12 @@
           </svg>
         </button>
       </div>
-      <h1 class="font-poppins text-xl font-bold">@{{ userPage?.body?.data?.name }}</h1>
+      <h1 class="font-poppins text-xl font-bold">@{{ userPage?.data?.name }}</h1>
     </div>
   </div>
   <section>
     <div class="flex flex-col h-auto overflow-hidden w-full">
-      <div v-for="post in userPage?.body?.data?.posts" :key="post.id">
+      <div v-for="post in userPage?.data?.posts" :key="post.id">
         <CardsPostCard :post="post" />
       </div>
     </div>
@@ -34,10 +34,15 @@
 
 <script setup>
 const route = useRoute();
+const nuxtApp = useNuxtApp();
 
 const name = typeof route.params.name === "string" ? route.params.name.toString() : null;
 
-const { data: userPage, error } = useFetch(`/api/user/${name}`);
+const { data: userPage, error } = useFetch(`/api/user/${name}`, {
+  getCachedData(key) {
+    return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+  },
+});
 
 useSeoMeta({
   title: `Laughify | Profile`,
