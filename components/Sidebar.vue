@@ -22,6 +22,11 @@
 </template>
 
 <script setup lang="ts">
+// {
+//   label: "Forgotten",
+//   to: "/forgotten",
+//   iconClass: "ri-skull-2-fill",
+// },
 const MENUS = [
   {
     label: "Hot",
@@ -37,11 +42,6 @@ const MENUS = [
     label: "Shuffle",
     to: "/shuffle",
     iconClass: "ri-shuffle-line",
-  },
-  {
-    label: "Forgotten",
-    to: "/forgotten",
-    iconClass: "ri-skull-2-fill",
   },
   {
     label: "Explore",

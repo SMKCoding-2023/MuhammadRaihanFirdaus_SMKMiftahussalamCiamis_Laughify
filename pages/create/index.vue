@@ -8,4 +8,8 @@
 useSeoMeta({
   title: "Laughify | Create Meme",
 });
+
+definePageMeta({
+  middleware: "auth",
+});
 </script>

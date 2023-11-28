@@ -7,13 +7,16 @@ export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
 
   try {
-    const { data: response, error } = await supabase.from("users").select("id, image, name, posts(id, title, url, hashtags, createdAt, users (name, image))").eq("name", name).order("posts.createdAt", { ascending: false });
+    const { data: response, error } = await supabase
+      .from("users")
+      .select("id, image, name, posts(id, title, url, hashtags, createdAt, users (name, image))")
+      .eq("name", name)
+      .order("createdAt", { referencedTable: "posts", ascending: false });
 
     //@ts-ignore
     const data = response[0];
 
     if (error) {
-      console.log(error);
       throw error;
     }
 

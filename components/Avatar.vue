@@ -64,11 +64,6 @@ const DROPDOWN_MENU = [
     iconClass: "ri-emotion-line",
   },
   {
-    label: "Setting",
-    to: "/setting",
-    iconClass: "ri-settings-4-line",
-  },
-  {
     label: "Create Meme",
     to: "/create",
     iconClass: "ri-image-add-line",

@@ -8,11 +8,16 @@
         <NuxtLink to="/" class="text-amber-800/70">
           <span class="font-[900] text-xl [text-shadow:_#c79373_1.5px_1.5px,#fad8c3_3px_3px]">LAUGHIFY</span>
         </NuxtLink>
-      </div>
-      <div class="flex justify-center items-center gap-1">
         <div class="hover:bg-base-200 rounded-full w-7 h-7 flex justify-center items-center cursor-pointer text-blue-500 hover:text-blue-600">
           <i class="ri-information-line text-lg"></i>
         </div>
+      </div>
+      <div class="flex justify-center items-center gap-1">
+        <NuxtLink to="/create">
+          <div class="btn btn-ghost btn-circle p-0">
+            <i class="ri-image-add-line text-lg text-amber-700/80"></i>
+          </div>
+        </NuxtLink>
         <Avatar />
       </div>
     </nav>
