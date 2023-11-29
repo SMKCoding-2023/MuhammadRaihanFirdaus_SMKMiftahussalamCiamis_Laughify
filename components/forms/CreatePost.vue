@@ -1,5 +1,6 @@
 <script setup>
 const user = useSupabaseUser();
+const { $awn } = useNuxtApp();
 
 const userStore = useUserStore();
 const storageStore = useStorageStore();
@@ -60,7 +61,7 @@ const createProduct = async () => {
     result.hashtags = hashtags.value.map((tag) => tag);
 
     if (result.hashtags.length === 0) {
-      throw new Error("Please insert at least one hashtag!");
+      $awn.warning("Please insert at least one hashtag!");
     }
 
     const file = await uploadFile(imageInput);
@@ -88,6 +89,8 @@ const createProduct = async () => {
       top: 0,
       behavior: "smooth",
     });
+    $awn.success("Post created!");
+
     router.push({ path: "/" });
   } catch (err) {
     isSuccess.value = err.status;
@@ -99,6 +102,7 @@ const createProduct = async () => {
       top: 0,
       behavior: "smooth",
     });
+    $awn.alert("Something went wrong!");
   }
 };
 
@@ -122,6 +126,7 @@ const onFileChange = (e) => {
     const fileExtension = file.name.split(".").pop().toLowerCase();
 
     if (!allowedExtensions.includes(fileExtension)) {
+      $awn.alert("File only accept PNG, JPG, JPEG, and WEBP");
       message.value = `File only accept PNG, JPG, JPEG, and WEBP`;
       isShowAlert.value = true;
       isLoading.value = false;

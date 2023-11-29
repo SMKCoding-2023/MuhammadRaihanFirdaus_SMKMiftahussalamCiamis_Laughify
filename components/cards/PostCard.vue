@@ -25,8 +25,12 @@
                 </svg>
               </div>
             </div>
-            <div :class="`${isShow ? 'absolute' : 'hidden'} right-0 top-8 dropdown-content shadow-sm z-[1] w-32 border-base-300 border min-h-full bg-base-100 font-quicksand rounded-md`">
-              <div v-for="(menu, i) in DROPDOWN_MENU" :key="i">
+            <div :class="`${isShow ? 'absolute' : 'hidden'} right-0 top-8 dropdown-content shadow-sm z-[1] w-36 border-base-300 border min-h-full bg-base-100 font-quicksand rounded-md`">
+              <div @click="copyToClipboard()" class="h-full w-full px-5 py-2 hover:bg-base-200 font-semibold flex gap-3 items-center cursor-pointer">
+                <i class="ri-share-line"></i>
+                Copy link
+              </div>
+              <div v-if="isUserLoginPost" v-for="(menu, i) in DROPDOWN_MENU" :key="i">
                 <NuxtLink :class="`w-full px-5 py-2 hover:bg-base-200 font-semibold flex gap-3 items-center cursor-pointer ${menu.classAdditional && [...menu.classAdditional]}`">
                   <i :class="menu.iconClass"></i>
                   {{ menu.label }}
@@ -62,9 +66,25 @@
 
 <script setup lang="ts">
 const { post } = defineProps(["post"]);
+const { $awn } = useNuxtApp();
+const user = useSupabaseUser();
+
+const userStore = useUserStore();
+
+const userName = ref("");
+
+//@ts-ignore
+await userStore.getUserByEmail(user.value.email).then(() => {
+  //@ts-ignore
+  userName.value = userStore.user.name;
+});
+
+const isUserLoginPost = ref(post?.users?.name === userName.value);
 
 const isShow = ref(false);
+
 const dropdownRef = ref(null);
+const linkPost = ref(`https://laughify.raihanmd.site/post/${post.id}`);
 
 const closeDropdownOnOutsideClick = (event: any) => {
   //@ts-ignore
@@ -85,11 +105,17 @@ const dropdownToggle = () => {
   isShow.value = !isShow.value;
 };
 
+const copyToClipboard = () => {
+  try {
+    navigator.clipboard.writeText(linkPost.value);
+    $awn.success("Copied to clipboard!");
+  } catch (error) {
+    console.log(error);
+    $awn.alert("Error copying to clipboard");
+  }
+};
+
 const DROPDOWN_MENU = [
-  {
-    label: "Share",
-    iconClass: "ri-share-line",
-  },
   {
     label: "Edit",
     iconClass: "ri-edit-line",

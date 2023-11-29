@@ -44,9 +44,15 @@ const { data: userPage, error } = useFetch(`/api/user/${name}`, {
   },
 });
 
-useSeoMeta({
-  title: `Laughify | Profile`,
-});
+onMounted(() => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}),
+  useSeoMeta({
+    title: `Laughify | Profile`,
+  });
 
 definePageMeta({
   middleware: "auth",

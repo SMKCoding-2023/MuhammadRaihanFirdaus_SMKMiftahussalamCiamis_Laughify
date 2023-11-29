@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     SITE_URL: process.env.SITE_URL,
     VERCEL_URL: process.env.VERCEL_URL,
   },
-  css: ["~/assets/css/main.css", "@/assets/css/font.css"],
+  css: ["~/assets/css/main.css", "@/assets/css/font.css", "awesome-notifications/dist/style.css"],
   postcss: {
     plugins: {
       tailwindcss: {},
