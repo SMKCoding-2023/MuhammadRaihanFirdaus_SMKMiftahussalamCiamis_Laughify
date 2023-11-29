@@ -53,8 +53,4 @@ onMounted(() => {
   useSeoMeta({
     title: `Laughify | Profile`,
   });
-
-definePageMeta({
-  middleware: "auth",
-});
 </script>

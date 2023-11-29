@@ -6,7 +6,22 @@ export default defineNuxtConfig({
     },
   },
   devtools: { enabled: false },
-  modules: ["@nuxtjs/supabase", "@nuxtjs/tailwindcss", "@pinia/nuxt", "@nuxt/image", "@vite-pwa/nuxt"],
+  modules: ["@nuxtjs/supabase", "@nuxtjs/tailwindcss", "@pinia/nuxt", "@nuxt/image", "@vite-pwa/nuxt", "nuxt-primevue"],
+  primevue: {
+    options: {
+      ripple: true,
+    },
+    components: {
+      include: ["Dialog"],
+    },
+  },
+  supabase: {
+    redirectOptions: {
+      login: "/login",
+      callback: "/confirm",
+      exclude: ["/", "/post/*", "/rank", "/shuffle", "/trend", "/hashtag/*", "/user/*"],
+    },
+  },
   appConfig: {
     SUPABASE_DATABASE_PASSWORD: process.env.SUPABASE_DATABASE_PASSWORD,
     SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
@@ -15,7 +30,7 @@ export default defineNuxtConfig({
     SITE_URL: process.env.SITE_URL,
     VERCEL_URL: process.env.VERCEL_URL,
   },
-  css: ["~/assets/css/main.css", "@/assets/css/font.css", "awesome-notifications/dist/style.css"],
+  css: ["~/assets/css/main.css", "@/assets/css/font.css", "awesome-notifications/dist/style.css", "primevue/resources/themes/lara-light-teal/theme.css"],
   postcss: {
     plugins: {
       tailwindcss: {},

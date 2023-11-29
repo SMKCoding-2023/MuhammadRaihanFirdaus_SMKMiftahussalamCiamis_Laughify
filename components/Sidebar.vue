@@ -22,11 +22,6 @@
 </template>
 
 <script setup lang="ts">
-// {
-//   label: "Forgotten",
-//   to: "/forgotten",
-//   iconClass: "ri-skull-2-fill",
-// },
 const MENUS = [
   {
     label: "Hot",

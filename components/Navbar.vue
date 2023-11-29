@@ -13,13 +13,26 @@
         </div>
       </div>
       <div class="flex justify-center items-center gap-1">
-        <NuxtLink to="/create">
-          <div class="btn btn-ghost btn-circle p-0">
-            <i class="ri-image-add-line text-lg text-amber-700/80"></i>
-          </div>
-        </NuxtLink>
-        <Avatar />
+        <div v-if="user" class="flex">
+          <NuxtLink to="/create">
+            <div class="btn btn-ghost btn-circle p-0">
+              <i class="ri-image-add-line text-lg text-amber-700/80"></i>
+            </div>
+          </NuxtLink>
+          <Avatar />
+        </div>
+        <div v-else class="flex justify-center items-center gap-1">
+          <NuxtLink to="/login">
+            <div class="btn btn-ghost btn-circle p-0">
+              <i class="text-4xl ri-account-circle-fill"></i>
+            </div>
+          </NuxtLink>
+        </div>
       </div>
     </nav>
   </header>
 </template>
+
+<script setup>
+const user = useSupabaseUser();
+</script>

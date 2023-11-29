@@ -32,8 +32,4 @@ const { data: hashtagSearch, error } = useFetch(`/api/hashtag/${hashtag}`, {
 useSeoMeta({
   title: `Laughify | Hashtag`,
 });
-
-definePageMeta({
-  middleware: "auth",
-});
 </script>

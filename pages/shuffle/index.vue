@@ -29,8 +29,4 @@ const { data: shuffleMeme, error } = useFetch(`/api/shuffle`, {
 useSeoMeta({
   title: `Laughify | Random Meme`,
 });
-
-definePageMeta({
-  middleware: "auth",
-});
 </script>

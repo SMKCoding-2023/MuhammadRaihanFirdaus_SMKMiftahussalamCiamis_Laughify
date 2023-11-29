@@ -30,11 +30,13 @@
                 <i class="ri-share-line"></i>
                 Copy link
               </div>
-              <div v-if="isUserLoginPost" v-for="(menu, i) in DROPDOWN_MENU" :key="i">
-                <NuxtLink :class="`w-full px-5 py-2 hover:bg-base-200 font-semibold flex gap-3 items-center cursor-pointer ${menu.classAdditional && [...menu.classAdditional]}`">
-                  <i :class="menu.iconClass"></i>
-                  {{ menu.label }}
-                </NuxtLink>
+              <div v-if="isUserLoginPost" @click="toggleDialog('edit')" class="h-full w-full px-5 py-2 hover:bg-base-200 font-semibold flex gap-3 items-center cursor-pointer text-blue-500">
+                <i class="ri-edit-line"></i>
+                Edit
+              </div>
+              <div v-if="isUserLoginPost" @click="toggleDialog('delete')" class="h-full w-full px-5 py-2 hover:bg-base-200 font-semibold flex gap-3 items-center cursor-pointer text-red-500">
+                <i class="ri-delete-bin-line"></i>
+                Delete
               </div>
             </div>
           </div>
@@ -62,22 +64,117 @@
       </div>
     </div>
   </div>
+  <Dialog v-model:visible="dialog.visible" modal header="Header" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }" class="bg-base-100">
+    <template #header>
+      <div class="inline-flex align-items-center justify-content-center gap-2">
+        <p v-if="dialog.type === 'edit'">Edit post</p>
+        <p v-else>Confirmation Delete post</p>
+      </div>
+    </template>
+    <form @submit.prevent="editPost" v-if="dialog.type === 'edit'">
+      <div class="mb-6">
+        <label for="title" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Title </label>
+
+        <div>
+          <input
+            type="text"
+            id="title"
+            v-model="titleInput"
+            class="input-md border-dashed bg-base-200 border border-gray-900/25 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
+            placeholder="Some epic title..."
+            required="true"
+          />
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label for="hashtag" class="block mb-2 text-lg text-gray-900 font-poppins font-semibold"> Hashtag </label>
+
+        <div class="join flex">
+          <input
+            @keydown="validateInputHashtag"
+            @keyup="addHashtag"
+            type="text"
+            id="hashtag"
+            v-model="tempHashtag"
+            class="flex-1 join-item input-md mb-3 bg-base-200 border border-dashed border-gray-900/25 text-gray-900 text-sm rounded-lg focus:ring-base-300 focus:border-base-300 block w-full p-2.5 placeholder-amber-700/50"
+            placeholder="More hashtag be better..."
+          />
+          <button type="button" @click="addHashtagWithButton" class="btn join-item btn-md border border-dashed border-gray-900/25 hover:bg-red-400/70 hover:text-white">
+            <i class="ri-add-line"></i>
+          </button>
+        </div>
+        <p class="text-gray-700 hidden md:block">Note : If you're using desktop, use <kbd class="kbd kbd-sm">space</kbd> or <kbd class="kbd kbd-sm">,</kbd> as separator.</p>
+      </div>
+
+      <div class="mb-6" v-show="hashtags.length > 0">
+        <div class="flex items-center gap-2 flex-wrap">
+          <div v-for="(hashtag, index) in hashtags" :key="index" class="rounded-full p-1">
+            <div @click="removeHashtag(hashtag)" class="cursor-pointer badge badge-accent text-white gap-1 font-quicksand">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              <p>#{{ hashtag }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="text-white bg-primary btn hover:bg-red-400/70 focus:ring-4 focus:outline-none focus:ring-base-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
+        <span>Edit</span>
+      </button>
+    </form>
+
+    <div v-else>
+      <h2 class="mb-6">
+        Are you sure want to delete that post with title <span class="font-semibold">{{ post.title }}</span
+        >?
+      </h2>
+      <button @click="deletePost" class="text-white btn hover:bg-red-400/70 focus:ring-4 focus:outline-none focus:ring-base-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-red-400">
+        <i class="ri-delete-bin-line"></i>
+
+        <span>Yes, im sure</span>
+      </button>
+    </div>
+  </Dialog>
 </template>
 
-<script setup lang="ts">
+<script setup>
 const { post } = defineProps(["post"]);
 const { $awn } = useNuxtApp();
 const user = useSupabaseUser();
 
+const router = useRouter();
+
 const userStore = useUserStore();
+const postStore = usePostStore();
 
 const userName = ref("");
+const userId = ref("");
+const dialog = reactive({ visible: false, type: null });
+const titleInput = ref(post.title);
+const tempHashtag = ref("");
+const hashtags = ref(post.hashtags.map((item) => item));
 
-//@ts-ignore
-await userStore.getUserByEmail(user.value.email).then(() => {
-  //@ts-ignore
-  userName.value = userStore.user.name;
+watch(dialog, () => {
+  if (!dialog.value) {
+    titleInput.value = post.title;
+    tempHashtag.value = "";
+    hashtags.value = post.hashtags.map((item) => item);
+  }
 });
+
+const toggleDialog = (type) => {
+  dialog.visible = !dialog.visible;
+  dialog.type = type;
+};
+
+if (user.value) {
+  await userStore.getUserByEmail(user.value.email).then(() => {
+    userName.value = userStore.user.name;
+    userId.value = userStore.user.id;
+  });
+}
 
 const isUserLoginPost = ref(post?.users?.name === userName.value);
 
@@ -86,7 +183,7 @@ const isShow = ref(false);
 const dropdownRef = ref(null);
 const linkPost = ref(`https://laughify.raihanmd.site/post/${post.id}`);
 
-const closeDropdownOnOutsideClick = (event: any) => {
+const closeDropdownOnOutsideClick = (event) => {
   //@ts-ignore
   if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
     isShow.value = false;
@@ -115,16 +212,109 @@ const copyToClipboard = () => {
   }
 };
 
-const DROPDOWN_MENU = [
-  {
-    label: "Edit",
-    iconClass: "ri-edit-line",
-    classAdditional: ["text-blue-500"],
-  },
-  {
-    label: "Delete",
-    iconClass: "ri-delete-bin-line",
-    classAdditional: ["text-red-500"],
-  },
-];
+const editPost = async () => {
+  try {
+    const result = {};
+
+    result.title = titleInput.value;
+    result.hashtags = hashtags.value.map((tag) => tag);
+    result.id = post.id;
+
+    if (result.hashtags.length === 0) {
+      $awn.warning("Please insert at least one hashtag!");
+    }
+
+    await postStore.updatePost(result);
+
+    if (!postStore.status) {
+      const err = new Error(postStore.message);
+      err.status = postStore.status;
+      throw err;
+    }
+
+    hashtags.value = [];
+    titleInput.value = [];
+    dialog.visible = false;
+    dialog.type = null;
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    $awn.success(postStore.message);
+    router.push({ path: `/post/${post.id}`, force: true });
+  } catch (error) {
+    dialog.visible = false;
+    dialog.type = null;
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    $awn.alert(error.message);
+  }
+};
+
+const deletePost = async () => {
+  try {
+    const result = {};
+
+    result.id = post.id;
+
+    await postStore.deletePost(result);
+
+    if (!postStore.status) {
+      const err = new Error(postStore.message);
+      err.status = postStore.status;
+      throw err;
+    }
+
+    dialog.visible = false;
+    dialog.type = null;
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    $awn.success(postStore.message);
+    router.push({ path: `/user/${userName.value}`, force: true });
+  } catch (error) {
+    dialog.visible = false;
+    dialog.type = null;
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    $awn.alert(error.message);
+  }
+};
+
+const validateInputHashtag = (e) => {
+  if (!(e.key === "," || (e.key >= "a" && e.key <= "z") || (e.key === " " && tempHashtag.value.trim() !== "") || e.key === "Backspace")) {
+    e.preventDefault();
+  }
+};
+
+const addHashtag = (e) => {
+  if (e.key === "," || (e.key === " " && tempHashtag.value.trim() !== "")) {
+    const filteredInput = tempHashtag.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
+    if (!hashtags.value.includes(filteredInput)) {
+      if (filteredInput !== "") {
+        hashtags.value.push(filteredInput);
+      }
+    }
+    tempHashtag.value = "";
+  }
+};
+
+const addHashtagWithButton = (e) => {
+  const filteredInput = tempHashtag.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
+  if (!hashtags.value.includes(filteredInput)) {
+    if (filteredInput !== "") {
+      hashtags.value.push(filteredInput);
+    }
+  }
+  tempHashtag.value = "";
+};
+
+const removeHashtag = (hashtag) => {
+  hashtags.value = hashtags.value.filter((cur) => cur !== hashtag);
+};
 </script>

@@ -14,10 +14,6 @@
 useSeoMeta({
   title: `Laughify | Rank`,
 });
-
-definePageMeta({
-  middleware: "auth",
-});
 </script>
 
 <style scoped></style>

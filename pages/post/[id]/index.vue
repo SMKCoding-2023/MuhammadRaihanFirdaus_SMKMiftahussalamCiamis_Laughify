@@ -25,8 +25,4 @@ const { data: idSearch, error } = useFetch(`/api/post/${id}`, {
 useSeoMeta({
   title: `Laughify | Post Detail`,
 });
-
-definePageMeta({
-  middleware: "auth",
-});
 </script>
