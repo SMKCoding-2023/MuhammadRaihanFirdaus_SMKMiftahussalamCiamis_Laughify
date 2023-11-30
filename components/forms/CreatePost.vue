@@ -236,7 +236,7 @@ const deletePreview = () => {
         </div>
       </div>
 
-      <button type="submit" class="text-white bg-primary btn hover:bg-red-400/70 focus:ring-4 focus:outline-none focus:ring-base-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
+      <button :disabled="hashtags.length === 0" type="submit" class="text-white bg-primary btn hover:bg-red-400/70 focus:ring-4 focus:outline-none focus:ring-base-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
         <span v-if="!isLoading">Submit</span>
         <div v-else class="flex items-center gap-3">
           <div class="w-5 h-5 rounded-full border-2 border-t-pink-200 animate-spin"></div>
